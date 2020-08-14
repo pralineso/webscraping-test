@@ -23,8 +23,6 @@ if __name__ == '__main__':
     soup = BeautifulSoup(response.text, "html.parser")
     search_results = soup.find_all(has_data_index)
 
-    #parte para funcao expecifica
-
 
     print('Buscando... \n')
     for result in search_results:
@@ -42,7 +40,7 @@ if __name__ == '__main__':
                 price = product_price.text
                 prices.append(price)
             else:
-                #ai pega o preco menor
+                #nao tem preco
                 prices.append('Sem preço')
 
         count = count + 1
