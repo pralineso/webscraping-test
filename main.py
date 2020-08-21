@@ -1,3 +1,4 @@
+import streamlit as st
 import pandas as pd
 import requests as r
 from bs4 import BeautifulSoup
@@ -16,42 +17,47 @@ if __name__ == '__main__':
     word = 'iphone'
     count = 1  # count que vai ate 24 que é quantidade de item por pagina
 
-    response = r.get(url.format(word))
+    st.title('Websraping Amazon site')
 
-    print('Acessando o site \n')
+    word2 = st.text_input("Digite o nome do produto")
 
-    soup = BeautifulSoup(response.text, "html.parser")
-    search_results = soup.find_all(has_data_index)
+    if st.button('Buscar'):
+        response = r.get(url.format(word))
+
+        st.write('Acessando o site ')
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        search_results = soup.find_all(has_data_index)
 
 
-    print('Buscando... \n')
-    for result in search_results:
-        product_name = result.find('h2', class_='a-size-mini a-spacing-none a-color-base s-line-clamp-4')
-        product_price = result.find('span', class_='a-offscreen')
+        st.write('Buscando... ')
+        for result in search_results:
+            product_name = result.find('h2', class_='a-size-mini a-spacing-none a-color-base s-line-clamp-4')
+            product_price = result.find('span', class_='a-offscreen')
 
-        if (count <= 24):
+            if (count <= 24):
 
-            if product_name:
-                product = product_name.text.strip()
-                products.append(product)
-                #print(product)
+                if product_name:
+                    product = product_name.text.strip()
+                    products.append(product)
+                    #print(product)
 
-            if product_price:
-                price = product_price.text
-                prices.append(price)
-            else:
-                #nao tem preco
-                prices.append('Sem preço')
+                if product_price:
+                    price = product_price.text
+                    prices.append(price)
+                else:
+                    #nao tem preco
+                    prices.append('Sem preço')
 
-        count = count + 1
+            count = count + 1
 
-    print('Busca finalizada! \n')
+        st.write('Busca finalizada! ')
 
-    print('Gerando Tabela... \n')
-    produtos = {'Nome': products, 'Valor': prices}
-    df = pd.DataFrame(produtos, columns=('Nome', 'Valor'))
+        st.write('Gerando Tabela... ')
+        produtos = {'Nome': products, 'Valor': prices}
+        df = pd.DataFrame(produtos, columns=('Nome', 'Valor'))
 
-    print('Gerando Arquivo... \n')
-    df.to_excel("tabela.xlsx", sheet_name='Produtos')
+        st.write('Gerando Arquivo... ')
+        # df.to_excel("tabela.xlsx", sheet_name='Produtos')
 
-    print('Programa finalizado!')
+        st.write('Programa finalizado!')
