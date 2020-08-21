@@ -17,20 +17,23 @@ if __name__ == '__main__':
     word = 'iphone'
     count = 1  # count que vai ate 24 que é quantidade de item por pagina
 
-    st.title('Websraping Amazon site')
+    st.title('Websraping')
+    st.markdown(
+        'Essa é uma aplicação te retorna uma lista com os nomes e preços de todos os produtos encontrados na primeira página da Amazon.')
 
-    word2 = st.text_input("Digite o nome do produto")
+    word2 = st.text_input("Digite o nome do produto ")
+    # st.write(word2)
 
     if st.button('Buscar'):
-        response = r.get(url.format(word))
+        response = r.get(url.format(word2))
 
-        st.write('Acessando o site ')
+        # st.write('Acessando o site ')
 
         soup = BeautifulSoup(response.text, "html.parser")
         search_results = soup.find_all(has_data_index)
 
 
-        st.write('Buscando... ')
+        # st.write('Buscando... ')
         for result in search_results:
             product_name = result.find('h2', class_='a-size-mini a-spacing-none a-color-base s-line-clamp-4')
             product_price = result.find('span', class_='a-offscreen')
@@ -51,13 +54,14 @@ if __name__ == '__main__':
 
             count = count + 1
 
-        st.write('Busca finalizada! ')
+        # st.write('Busca finalizada! ')
 
         st.write('Gerando Tabela... ')
         produtos = {'Nome': products, 'Valor': prices}
         df = pd.DataFrame(produtos, columns=('Nome', 'Valor'))
+        st.dataframe(df)
 
-        st.write('Gerando Arquivo... ')
+        # st.write('Gerando Arquivo... ')
         # df.to_excel("tabela.xlsx", sheet_name='Produtos')
 
         st.write('Programa finalizado!')
