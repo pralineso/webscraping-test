@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 
 def has_data_index(tag):
-    return tag.has_attr('data-index')
+    return tag.has_attr('data-index') and tag.has_attr('data-uuid')
 
 
 if __name__ == '__main__':
@@ -21,47 +21,54 @@ if __name__ == '__main__':
     st.markdown(
         'Essa é uma aplicação te retorna uma lista com os nomes e preços de todos os produtos encontrados na primeira página da Amazon.')
 
-    word2 = st.text_input("Digite o nome do produto ")
+    word = st.text_input("Digite o nome do produto ")
     # st.write(word2)
 
     if st.button('Buscar'):
-        response = r.get(url.format(word2))
 
-        # st.write('Acessando o site ')
+        response = r.get(url.format(word))
 
         soup = BeautifulSoup(response.text, "html.parser")
         search_results = soup.find_all(has_data_index)
 
+        print(search_results)
 
-        # st.write('Buscando... ')
-        for result in search_results:
-            product_name = result.find('h2', class_='a-size-mini a-spacing-none a-color-base s-line-clamp-4')
-            product_price = result.find('span', class_='a-offscreen')
+        if search_results:
 
-            if (count <= 24):
+            for result in search_results:
+                product_name = result.find('h2', class_='a-size-mini a-spacing-none a-color-base s-line-clamp-4')
+                product_price = result.find('span', class_='a-offscreen')
 
-                if product_name:
-                    product = product_name.text.strip()
-                    products.append(product)
-                    #print(product)
+                if (count <= 24):
 
-                if product_price:
-                    price = product_price.text
-                    prices.append(price)
-                else:
-                    #nao tem preco
-                    prices.append('Sem preço')
+                    if product_name:
+                        product = product_name.text.strip()
+                        products.append(product)
+                        #print(product)
 
-            count = count + 1
+                    if product_price:
+                        price = product_price.text
+                        prices.append(price)
+                    else:
+                        #nao tem preco
+                        prices.append('Sem preço')
 
-        # st.write('Busca finalizada! ')
+                count = count + 1
 
-        st.write('Gerando Tabela... ')
-        produtos = {'Nome': products, 'Valor': prices}
-        df = pd.DataFrame(produtos, columns=('Nome', 'Valor'))
-        st.dataframe(df)
+            # st.write('Busca finalizada! ')
 
-        # st.write('Gerando Arquivo... ')
-        # df.to_excel("tabela.xlsx", sheet_name='Produtos')
+            produtos = {'Nome': products, 'Valor': prices}
+            df = pd.DataFrame(produtos, columns=('Nome', 'Valor'))
+            st.table(df)
 
-        st.write('Programa finalizado!')
+            # st.write('Gerando Arquivo... ')
+            # df.to_excel("tabela.xlsx", sheet_name='Produtos')
+
+            if st.button('Baixar tabela'):
+                st.write('baixar')
+
+        else:
+            st.write('Desculpe, ocorreu um erro :(')
+            st.write('Tente novamente mais tarde !')
+
+
