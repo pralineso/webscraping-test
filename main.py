@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
 import requests as r
-from bs4 import BeautifulSoup
 import base64
 
+
+from bs4 import BeautifulSoup
 from io import BytesIO
 
 def has_data_index(tag):
@@ -38,13 +39,11 @@ if __name__ == '__main__':
     count = 1  # count que vai ate 24 que é quantidade de item por pagina
 
     st.title('Websraping')
-    st.markdown(
-        'Essa é uma aplicação te retorna uma lista com os nomes e preços de todos os produtos encontrados na primeira página da Amazon.')
+    st.markdown('Essa é uma aplicação te retorna uma lista com os nomes e preços de todos os produtos encontrados na primeira página da Amazon.')
 
     word = st.text_input("Digite o nome do produto ")
-    # st.write(word2)
 
-    if st.button('Buscar'):
+    if word:
 
         response = r.get(url.format(word))
 
@@ -75,18 +74,13 @@ if __name__ == '__main__':
 
                 count = count + 1
 
-            # st.write('Busca finalizada! ')
 
             produtos = {'Nome': products, 'Valor': prices}
             df = pd.DataFrame(produtos, columns=('Nome', 'Valor'))
             st.table(df)
 
-            # st.write('Gerando Arquivo... ')
-            # df.to_excel("tabela.xlsx", sheet_name='Produtos')
-
             st.subheader('Faça download da tabela: ')
             st.markdown(get_table_download_link(df), unsafe_allow_html=True)
-
 
         else:
             st.write('Desculpe, ocorreu um erro :(')
