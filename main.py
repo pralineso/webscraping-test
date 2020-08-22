@@ -2,10 +2,30 @@ import streamlit as st
 import pandas as pd
 import requests as r
 from bs4 import BeautifulSoup
+import base64
 
+from io import BytesIO
 
 def has_data_index(tag):
     return tag.has_attr('data-index') and tag.has_attr('data-uuid')
+
+def to_excel(df):
+    output = BytesIO()
+    writer = pd.ExcelWriter(output, engine='xlsxwriter')
+    df.to_excel(writer, sheet_name='Produtos')
+    writer.save()
+    processed_data = output.getvalue()
+    return processed_data
+
+def get_table_download_link(df):
+    """Generates a link allowing the data in a given panda dataframe to be downloaded
+    in:  dataframe
+    out: href string
+    """
+    val = to_excel(df)
+    b64 = base64.b64encode(val)  # val looks like b'...'
+    href = f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="tabela.xlsx">Download xlsx file</a>'  # decode b'abc' => abc
+    return href
 
 
 if __name__ == '__main__':
@@ -64,8 +84,9 @@ if __name__ == '__main__':
             # st.write('Gerando Arquivo... ')
             # df.to_excel("tabela.xlsx", sheet_name='Produtos')
 
-            if st.button('Baixar tabela'):
-                st.write('baixar')
+            st.subheader('Faça download da tabela: ')
+            st.markdown(get_table_download_link(df), unsafe_allow_html=True)
+
 
         else:
             st.write('Desculpe, ocorreu um erro :(')
