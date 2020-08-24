@@ -35,6 +35,7 @@ if __name__ == '__main__':
     prices = []
 
     url = 'https://www.amazon.com.br/s?k={}&__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&ref=nb_sb_noss/'
+ #   url = 'https://www.amazon.com/s?k={}&ref=nb_sb_noss_2/'
     word = 'iphone'
     count = 1  # count que vai ate 24 que é quantidade de item por pagina
 
@@ -43,14 +44,21 @@ if __name__ == '__main__':
 
     word = st.text_input("Digite o nome do produto ")
 
+#    st.write(word)
+
     if word:
 
         response = r.get(url.format(word))
 
+      #  st.markdown(response)
+
         soup = BeautifulSoup(response.text, "html.parser")
+
+      #  st.markdown(soup)
+
         search_results = soup.find_all(has_data_index)
 
-        print(search_results)
+      #  st.markdown(search_results)
 
         if search_results:
 
@@ -63,7 +71,6 @@ if __name__ == '__main__':
                     if product_name:
                         product = product_name.text.strip()
                         products.append(product)
-                        #print(product)
 
                     if product_price:
                         price = product_price.text
